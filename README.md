@@ -22,3 +22,6 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### mock API
+https://6274f68c5dc4f5764b9c1500.mockapi.io/pets
