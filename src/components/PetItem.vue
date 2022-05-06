@@ -10,6 +10,7 @@
             <template #subtitle>Age: {{ pet.age }} </template>
             <template #footer>
                 <Button
+                    @click="onRemove(pet.id)"
                     icon="pi pi-times"
                     label="Remove"
                     class="p-button-rounded p-button-warning"
@@ -18,11 +19,8 @@
                 <Button
                     icon="pi pi-heart"
                     class="p-button-rounded p-button-danger"
+                    :class="[pet.isFavorite ? '' : 'p-button-outlined']"
                     style="margin-right: 0.5em"
-                />
-                <Button
-                    icon="pi pi-heart"
-                    class="p-button-rounded p-button-danger p-button-outlined"
                 />
             </template>
         </Card>
@@ -32,6 +30,11 @@
 <script>
 export default {
     props: ['pet'],
+    methods: {
+        onRemove(id) {
+            this.$emit('remove-pet', id)
+        },
+    },
 };
 </script>
 

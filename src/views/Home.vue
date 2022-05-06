@@ -1,15 +1,18 @@
 <template>
     <div class="home">
-        <PetList :pets="pets" />
+        <AddPetItem />
+        <PetList @remove-pet="removePet" :pets="pets" />
     </div>
 </template>
 
 <script>
 import PetList from '@/components/PetList.vue';
+import AddPetItem from '@/components/AddPetItem.vue';
 export default {
     name: 'HomeView',
     components: {
         PetList,
+        AddPetItem,
     },
     data() {
         return {
@@ -26,7 +29,7 @@ export default {
                     name: 'huskey',
                     age: 4,
                     image: 'https://images.dog.ceo/breeds/komondor/n02105505_3706.jpg',
-                    isFavorite: true,
+                    isFavorite: false,
                 },
                 {
                     id: 3,
@@ -44,6 +47,14 @@ export default {
                 },
             ],
         };
+    },
+    methods: {
+        removePet(id) {
+            console.log('Home', id);
+            if (confirm('Are you sure wanna remove this pet')) {
+                this.pets = this.pets.filter((pet) => pet.id !== id);
+            }
+        },
     },
 };
 </script>

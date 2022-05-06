@@ -5,7 +5,7 @@
             :key="index"
             class="col-12 sm:col-3 md:col-6 lg:col-3"
         >
-            <PetItem :pet="pet" />
+            <PetItem @remove-pet="$emit('remove-pet', pet.id)" :pet="pet" />
         </div>
     </div>
 </template>
@@ -16,6 +16,7 @@ export default {
     components: {
         PetItem,
     },
+    emits: ['remove-pet'],
 };
 </script>
 
