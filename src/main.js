@@ -13,6 +13,9 @@ import Button from 'primevue/button';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
 
+import api from '@/services/api.js';
+
+Vue.prototype.$http = api;
 Vue.config.productionTip = false;
 Vue.use(PrimeVue, { ripple: true });
 

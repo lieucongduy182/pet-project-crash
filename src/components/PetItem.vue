@@ -2,7 +2,7 @@
     <div class="petItem">
         <Card>
             <template #header>
-                <img :src="pet.image" style="height: 20em" />
+                <img :src="pet.image" style="height: 20em; object-fit:cover" />
             </template>
             <template #title>
                 {{ pet.name }}
@@ -17,6 +17,7 @@
                     style="margin-right: 3em"
                 />
                 <Button
+                    @click="addFavorite(pet.id)"
                     icon="pi pi-heart"
                     class="p-button-rounded p-button-danger"
                     :class="[pet.isFavorite ? '' : 'p-button-outlined']"
@@ -32,10 +33,11 @@ export default {
     props: ['pet'],
     methods: {
         onRemove(id) {
-            this.$emit('remove-pet', id)
+            this.$emit('remove-pet', id);
+        },
+        addFavorite(id) {
+            this.$emit('add-favorite', id);
         },
     },
 };
 </script>
-
-<style></style>
