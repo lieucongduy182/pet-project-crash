@@ -1,72 +1,91 @@
 <template>
     <div class="home">
-        <AddPetItem @add-pet="addPet" />
+        <FormInput @add-pet="addPet" :editPetIndex="editPetIndex" />
         <PetList
+            @edit-pet="editPet"
             @remove-pet="removePet"
             @add-favorite="addFavorite"
             :pets="pets"
         />
+        <Toast position="top-right" />
     </div>
 </template>
 
 <script>
 import PetList from '@/components/PetList.vue';
-import AddPetItem from '@/components/AddPetItem.vue';
+import FormInput from '@/components/FormInput.vue';
 export default {
     name: 'HomeView',
     components: {
         PetList,
-        AddPetItem,
+        FormInput,
     },
     data() {
         return {
             pets: [
-                // {
-                //     id: 1,
-                //     name: 'chihuahua',
-                //     age: 2,
-                //     image: 'https://images.dog.ceo/breeds/germanshepherd/n02106662_13912.jpg',
-                //     isFavorite: true,
-                // },
-                // {
-                //     id: 2,
-                //     name: 'huskey',
-                //     age: 4,
-                //     image: 'https://images.dog.ceo/breeds/komondor/n02105505_3706.jpg',
-                //     isFavorite: false,
-                // },
-                // {
-                //     id: 3,
-                //     name: 'huskey',
-                //     age: 4,
-                //     image: 'https://images.dog.ceo/breeds/komondor/n02105505_3706.jpg',
-                //     isFavorite: true,
-                // },
-                // {
-                //     id: 4,
-                //     name: 'huskey',
-                //     age: 4,
-                //     image: 'https://images.dog.ceo/breeds/komondor/n02105505_3706.jpg',
-                //     isFavorite: true,
-                // },
+       
             ],
+            editPetIndex: {},
         };
     },
     methods: {
         async addPet(pet) {
-            try {
-                const response = await this.$http.post('/pets', pet);
-                this.pets = [...this.pets, response.data];
-            } catch (error) {
-                console.log(error);
+            if (pet.id != null) {
+                const dataEditPet = {
+                    id: pet.id,
+                    name: pet.name,
+                    age: pet.age,
+                    image: pet.image,
+                };
+                const response = await this.$http.put(
+                    `/pets/${pet.id}`,
+                    dataEditPet
+                );
+                if (response.status == 200) {
+                    this.fetchPets();
+                    this.editPetIndex = {};
+                    this.$toast.add({
+                        severity: 'success',
+                        summary: 'Update Pet Success',
+                        life: 3000,
+                    });
+                }
+            } else {
+                if (pet.name == '' || pet.age == null || pet.image == '') {
+                    console.log('Required Field');
+                } else {
+                    const newPet = {
+                        name: pet.name,
+                        age: pet.age,
+                        image: pet.image,
+                        isFavorite: false,
+                    };
+                    try {
+                        const response = await this.$http.post('/pets', newPet);
+                        if (response) {
+                            this.fetchPets();
+                            this.editPetIndex = {};
+                            this.$toast.add({
+                                severity: 'success',
+                                summary: 'Add Pet Success',
+                                life: 3000,
+                            });
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
             }
+        },
+        editPet(pet) {
+            this.editPetIndex = pet;
         },
         async removePet(id) {
             try {
                 if (confirm('Are you sure wanna remove this pet')) {
                     const response = await this.$http.delete(`/pets/${id}`);
                     if (response.status === 200) {
-                        this.pets = this.pets.filter((pet) => pet.id !== id);
+                        this.fetchPets();
                     }
                 }
             } catch (error) {
@@ -83,15 +102,10 @@ export default {
                 const response = await this.$http.put(
                     `/pets/${id}`,
                     updatePetFavorite
-                )
+                );
                 if (response.status == 200) {
                     this.fetchPets();
                 }
-                // this.pets = this.pets.map((pet) =>
-                //     pet.id === id
-                //         ? { ...pet, isFavorite: !response.data.isFavorite }
-                //         : pet
-                // );
             } catch (error) {
                 console.log(error);
             }

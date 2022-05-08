@@ -7,7 +7,7 @@
                 type="text"
                 class="inputfield"
                 placeholder="Name"
-                v-model="name"
+                v-model="pet.name"
             />
         </div>
         <div class="field">
@@ -17,7 +17,7 @@
                 type="number"
                 class="inputfield"
                 placeholder="Age"
-                v-model="age"
+                v-model="pet.age"
             />
         </div>
         <div class="field">
@@ -27,7 +27,7 @@
                 type="text"
                 class="inputfield"
                 placeholder="Image URL"
-                v-model="image"
+                v-model="pet.image"
             />
         </div>
         <Button class="button" type="submit">Submit</Button>
@@ -36,33 +36,37 @@
 
 <script>
 export default {
+    props: {
+        editPetIndex: {
+            type: Object,
+            require: true,
+            default: () => {}
+        }
+    },
     data() {
         return {
-            name: '',
-            age: null,
-            image: '',
+            pet: {
+                id: null,
+                name: '',
+                age: null,
+                image: '',
+            },
         };
+    },
+    watch: {
+        editPetIndex: {
+            deep: true,
+            handler(newValue) {
+                let data = structuredClone(newValue);
+                this.pet = data;
+            },
+        },
     },
     methods: {
         onSubmit(e) {
             e.preventDefault();
-            if (this.name == '' || this.age == null || this.image == '') {
-                console.log('Required Field');
-            } else {
-                const newPet = {
-                    name: this.name,
-                    age: this.age,
-                    image: this.image,
-                    isFavorite: false,
-                };
-                this.$emit('add-pet', newPet);
-                this.name = '';
-                this.age = '';
-                this.image = '';
-            }
+            this.$emit('add-pet',this.pet)
         },
     },
 };
 </script>
-
-<style></style>
